@@ -1,0 +1,9 @@
+{
+    "User": {
+        "dbConfig": {
+            "host": "",
+            "port": 0,
+            "dbName": "users"
+        }
+    }
+}
