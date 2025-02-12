@@ -1,9 +1,40 @@
 {
     "User": {
-        "dbConfig": {
+        "Database": {
+            "db_name": "",
             "host": "",
             "port": 0,
-            "dbName": "users"
+            "db_username": "",
+            "db_password": ""
+        }
+    },
+    "AuthenticateStrategies": {
+        "Username": {
+            "active": true,
+            "Password": {
+                "active": true
+            },
+            "Email": {
+                "active": true
+            }
+        },
+        "SocialMedia": {
+            "active": false,
+            "Google": {
+                "active": false
+            },
+            "Instagram": {
+                "active": false
+            },
+            "Facebook": {
+                "active": false
+            },
+            "X": {
+                "active": false
+            }
+        },
+        "BoiseState": {
+            "active": false
         }
     }
 }
