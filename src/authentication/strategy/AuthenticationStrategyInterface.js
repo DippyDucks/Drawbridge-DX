@@ -14,16 +14,13 @@ class AuthenticationStrategyInterface {
      */
     authenticate(params) {
         throw new error("please use a class that implements this interface");
-        //TODO: get user from database
-        //TODO: if user exists return true
-        //TODO: if not, return false
     }
 
     refreshAuthToken() {
         throw new error("please use a class that implements this interface");
     }
 
-    registerUser(){
+    registerUser(params){
         throw new error("please use a class that implements this interface");
     }
 
