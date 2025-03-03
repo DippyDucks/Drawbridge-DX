@@ -1,4 +1,3 @@
-import UsernamePassword from "./strategy/UsernamePassword" //importing strategies
 
 //the context
 class AuthenticationService {
@@ -21,6 +20,23 @@ class AuthenticationService {
      */
     authenticate(params){
         return this.strategy.authenticate(params); 
+    }
+
+    /**
+     * calls the set strategy's registerUser method
+     * @param {*} params - json with needed registration info ie. email, username, password
+     * @returns 
+     */
+    registerUser(params){
+        return this.strategy.registerUser(params); 
+    }
+
+    /**
+     * calls the set strategy's logoutUser method
+     * @returns 
+     */
+    logOutUser(){
+        return this.strategy.logOutUser(); 
     }
 }
 
