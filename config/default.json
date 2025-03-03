@@ -21,7 +21,8 @@
         "SocialMedia": {
             "active": false,
             "Google": {
-                "active": false
+                "active": false,
+                "Client_ID": "816018920557-75tu9l4dj92hkjkv8799ja136ijhgv1t.apps.googleusercontent.com"
             },
             "Instagram": {
                 "active": false

@@ -9,7 +9,8 @@ class Google extends AuthenticationStrategyInterface {
     }
 
     refreshAuthToken() {
-        
+        //check if token still good, if it  is, just return, if not, refresh it.
+
     }
 
     registerUser(){
@@ -29,7 +30,7 @@ class Instagram extends AuthenticationStrategyInterface {
     authenticate(params) {
         // 
     }
-    
+
     refreshAuthToken() {
         
     }
