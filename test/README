@@ -1,0 +1,9 @@
+Test Dependencies:
+express, cors, body-parser
+
+Test Files:
+server.js
+/public
+/models
+
+REMOVE THEM ALL LATER!

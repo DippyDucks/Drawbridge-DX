@@ -17,12 +17,11 @@ const API = config.API
 func Login(params, strategy) {
     fetch(API + 'login/' + strategy {
         method: 'POST',
-        headers: { "Content-Type": "application/json"},
-        body: params // ?? JSON.stringify(params)
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(params)
     })
     .then((res) => res.json())
     .catch((err) => {
-        store.dispatch(alertActions.Error(err));
         console.log(err);
     });
 }
@@ -37,7 +36,7 @@ router.post('/login/:strategy', [validation?], model.Login) //skip router functi
 import AuthenticationService 
 import (all the strategies)
 
-func Login(req, res) {
+func Login(req) {
     AuthenticationService = new AuthenticationService()
 
     switch(req.params.strategy) {
@@ -45,7 +44,7 @@ func Login(req, res) {
             AuthenticationService.setStrategy(new UsernamePassword());
         }
         case "google" {
-            AuthenticationService.setStrategy(new Google()); 
+            AuthenticationService.setStrategy(new Google());
         }
     }
 

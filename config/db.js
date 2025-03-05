@@ -1,8 +1,8 @@
 //--------------------------------------------------
 //Connection to database pool
 //--------------------------------------------------
-const mysql = require('mysql2/promise');
-const config = require('config');
+import mysql from 'mysql2/promise';
+import config from 'config';
 const dbConfig = config.get('User.Database');
 
 // Connects the database to our server
@@ -32,7 +32,4 @@ async function query(sql, params) {
   }
 }
 
-module.exports = {
-  query,
-  getConnectionConfig,
-};
+export { query, getConnectionConfig };
