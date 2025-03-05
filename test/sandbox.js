@@ -45,7 +45,7 @@ func Login(req, res) {
             AuthenticationService.setStrategy(new UsernamePassword());
         }
         case "google" {
-            AuthenticationService.setStrategy(new SocialMedia(google)); //maybe social media constructor should set the specific one
+            AuthenticationService.setStrategy(new Google()); 
         }
     }
 
