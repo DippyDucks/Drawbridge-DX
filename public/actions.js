@@ -36,7 +36,7 @@ async function Register(params, strategy) {
         const data = await response.json();
 
         if (data.success) {
-
+            window.location.href = 'index.html';
         } 
         else {
             alert("Register failed: " + data.message);

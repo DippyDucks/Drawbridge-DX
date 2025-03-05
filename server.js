@@ -29,9 +29,9 @@ app.post('/register/:strategy', async (req, res) => {
     try {
         const response = await Register(req);
         if (response.success) {
-            res.json({});
+            res.json({ success: true, message: response.message });
         } else {
-            res.status(400).json({});
+            res.status(400).json({ success: false, message: 'Register failed' });
         }
     } catch (error) {
         console.error("Register error:", error);

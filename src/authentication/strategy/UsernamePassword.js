@@ -27,8 +27,7 @@ class UsernamePassword extends AuthenticationStrategyInterface {
                 jwtSecret,
                 { expiresIn: '6h' }
             );
-            localStorage.setItem('token', userToken);
-            localStorage.setItem('clearance', user.clearance);
+
             return { success: true, token: userToken, clearance: user.clearance };
         }
         else {
@@ -47,30 +46,22 @@ class UsernamePassword extends AuthenticationStrategyInterface {
      */
     async registerUser(params) {
         let user = await query("SELECT * FROM users WHERE username = ?", [params.username]);
-        let password;
-        if (user[0] && user[0].username) {
-            throw new Error("Username already taken.");
-        }
-        if (user[0] && user[0].email) {
-            throw new Error("Email already has registered account."); // prompt to login?
+        if (user.length > 0) {
+            if (user[0].username === params.username) {
+                throw new Error("Username already taken.");
+            }
+            if (user[0].email === params.email) {
+                throw new Error("Email already has a registered account."); // Prompt to login?
+            }
         }
 
-        // apply salt with bcrypt
-        if (params.password) {
-            const saltRounds = 10;
-            bcrypt.genSalt(saltRounds, function(err, salt) {
-                bcrypt.hash(params.password, salt, function(err, hash) {
-                    password = hash;
-                });
-            });
-        }
+        let password = await hashPassword(params.password);
 
         let insertParams = [params.username, password, params.email];
 
         await query("INSERT INTO users (username, password, email) VALUES (?, ?, ?)", insertParams);
 
-        // log in after created
-        this.authenticate(insertParams);
+        return { success: true, message: "User registered successfully." };
     }
 
     logOutUser() {
@@ -78,6 +69,19 @@ class UsernamePassword extends AuthenticationStrategyInterface {
         // reroute???
         return;
     }
+    
+}
+
+/**
+ * Helper function to hash password with bcrypt
+ * @param {*} password 
+ * @returns 
+ */
+async function hashPassword(password) {
+    const saltRounds = 10;
+    const salt = await bcrypt.genSalt(saltRounds);
+    const hash = await bcrypt.hash(password, salt);
+    return hash;
 }
 
 export default UsernamePassword;
