@@ -1,8 +1,8 @@
 import AuthenticationStrategyInterface from './AuthenticationStrategyInterface.js';
 
-const db = require("./db"); // ??
-const jwt = require("jsonwebtoken"); // ??
-const bcrypt = require('bcrypt'); // ??
+const db = require("../../../config/db.js"); 
+const jwt = require("jsonwebtoken"); 
+const bcrypt = require('bcrypt'); 
 
 class UsernamePassword extends AuthenticationStrategyInterface {
     //should have constructor where it takes the database connection class, or it just takes the config. first option is better for OOP
