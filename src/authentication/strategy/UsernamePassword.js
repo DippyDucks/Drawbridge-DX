@@ -1,8 +1,10 @@
 import AuthenticationStrategyInterface from './AuthenticationStrategyInterface.js';
 
-const db = require("../../../config/db.js"); 
-const jwt = require("jsonwebtoken"); 
-const bcrypt = require('bcrypt'); 
+import { query } from "../../../config/db.js";
+import jwt from "jsonwebtoken"; 
+import bcrypt from 'bcrypt'; 
+import config from 'config';
+const jwtSecret = config.get('User.JWT_SECRET');
 
 class UsernamePassword extends AuthenticationStrategyInterface {
     //should have constructor where it takes the database connection class, or it just takes the config. first option is better for OOP
@@ -15,19 +17,19 @@ class UsernamePassword extends AuthenticationStrategyInterface {
      */
     async authenticate(params) {
         // FUTURE ORM INSTEAD OF SQL
-        let user = (await db.query("SELECT * from users WHERE username = ?", [params.username]))[0];
+        let user = (await query("SELECT * from users WHERE username = ?", [params.username]))[0];
         if (!user) throw "User does not exist." // prompt to register?
 
         let isPassword = await bcrypt.compare(params.password, user.password);
         if (isPassword) {
             let userToken = jwt.sign(
                 { subject: user.id, clearance: user.clearance },
-                // CONFIG JWT SECRET ??,
+                jwtSecret,
                 { expiresIn: '6h' }
             );
             localStorage.setItem('token', userToken);
             localStorage.setItem('clearance', user.clearance);
-            return true; // ?? what should I return? should it just reroute?
+            return { success: true, token: userToken, clearance: user.clearance };
         }
         else {
             throw "Incorrect password."
@@ -44,13 +46,13 @@ class UsernamePassword extends AuthenticationStrategyInterface {
      * @param {*} params - username, password, and email + anything else needed
      */
     async registerUser(params) {
-        let user = await db.query("SELECT * FROM users WHERE username = ?", [params.username]);
+        let user = await query("SELECT * FROM users WHERE username = ?", [params.username]);
         let password;
-        if(user[0].username) {
-            throw "Username already taken."
+        if (user[0] && user[0].username) {
+            throw new Error("Username already taken.");
         }
-        if(user[0].email) {
-            throw "Email already has registered account." // prompt to login?
+        if (user[0] && user[0].email) {
+            throw new Error("Email already has registered account."); // prompt to login?
         }
 
         // apply salt with bcrypt
@@ -65,7 +67,7 @@ class UsernamePassword extends AuthenticationStrategyInterface {
 
         let insertParams = [params.username, password, params.email];
 
-        await db.query("INSERT INTO users (username, password, email) VALUES (?, ?, ?)", insertParams);
+        await query("INSERT INTO users (username, password, email) VALUES (?, ?, ?)", insertParams);
 
         // log in after created
         this.authenticate(insertParams);
