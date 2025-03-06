@@ -1,6 +1,7 @@
 const API = "http://localhost:3000";
 
 async function Login(params, strategy) {
+    console.log("inside actions.Login");
     try {
         const response = await fetch(`${API}/login/${strategy}`, {
             method: 'POST',
@@ -46,30 +47,5 @@ async function Register(params, strategy) {
     }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    // Check if the login button exists (for index.html)
-    const loginButton = document.getElementById("loginButton");
-    if (loginButton) {
-        loginButton.addEventListener("click", () => {
-            const username = document.getElementById("username").value;
-            const password = document.getElementById("password").value;
-
-            const params = { username, password };
-            Login(params, "username-password");
-        });
-    }
-
-    // Check if the register button exists (for register.html)
-    const registerButton = document.getElementById("registerButton");
-    if (registerButton) {
-        registerButton.addEventListener("click", () => {
-            const username = document.getElementById("username").value;
-            const password = document.getElementById("password").value;
-            const email = document.getElementById("email").value;
-
-            const params = { username, password, email };
-            Register(params, "username-password");
-        });
-    }
-});
+export {Login, Register}
 

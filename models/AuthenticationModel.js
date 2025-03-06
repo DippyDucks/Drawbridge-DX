@@ -1,4 +1,5 @@
 import AuthenticationService from '../src/authentication/AuthenticationService.js';
+import { Google } from '../src/authentication/strategy/SocialMedia.js';
 import UsernamePassword from '../src/authentication/strategy/UsernamePassword.js';
 
 async function Login(req) {
@@ -7,6 +8,9 @@ async function Login(req) {
     switch (req.params.strategy) {
         case "username-password":
             authenticationService.setStrategy(new UsernamePassword());
+            break;
+        case 'google':
+            authenticationService.setStrategy(new Google());
             break;
         default:
             throw new Error("Invalid authentication strategy");

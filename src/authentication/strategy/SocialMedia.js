@@ -1,26 +1,56 @@
 import AuthenticationStrategyInterface from './AuthenticationStrategyInterface.js';
-import OAuth2Client from './google-auth-library';
+import {OAuth2Client} from 'google-auth-library';
+import { query } from "../../../config/db.js";
+import jwt from "jsonwebtoken";
 import config from 'config';
-const client = new OAuth2Client();
 const ClientID = config.get('AuthenticateStrategies.SocialMedia.Google.Client_ID');
+console.log("ClientID: ", ClientID);
+const client = new OAuth2Client(ClientID);
+const jwtSecret = config.get("User.JWT_SECRET");
+
 
 class Google extends AuthenticationStrategyInterface {
     /**
      * concrete method
      */
-    authenticate(params) {
-        const token = params.token;
-        async function verify() {
-            const ticket = await client.verifyIdToken({
-                idToken: token,
-                audience: ClientID,  // Specify the WEB_CLIENT_ID of the app that accesses the backend. will want to get this from the config probably 
-            });
-            const payload = ticket.getPayload();
-            const userid = payload['sub'];
-            // If the request specified a Google Workspace domain:
-            // const domain = payload['hd'];
-          }
-          verify().catch(console.error);
+    async authenticate(params) {
+       //verify ID token
+       console.log("params: ", params);
+       try{
+        const ticket = await client.verifyIdToken({
+        idToken: params.idToken,
+        audience: ClientID
+       });
+
+       if(!ticket){
+        throw 'somethings wrong with the ticket :('
+       }
+
+       //get user's payload (info)
+       const payload = ticket.getPayload();
+       const userID = payload['sub']; //google's unique user ID
+       const email = payload.email //user's email address
+
+       console.log("userID: ", userID);
+       console.log('email: ', email);
+
+       let user = (await query("SELECT * FROM users WHERE email = ? AND user_id = ?", [email, userID]))[0];
+       if(!user) return { success: false, message: "User does not exist" };
+       
+       let userToken = jwt.sign(
+        {subject: user.id, clearance: user.clearance},
+        jwtSecret,
+        {expiresIn: '6h'}
+       );
+
+       return {success: true, token: userToken, clearance: user.clearance};
+       }
+       catch(error){
+        console.error("Error verifying token:", error);
+       return { success: false, message: error };
+       }
+       
+
     }
 
     refreshAuthToken() {
