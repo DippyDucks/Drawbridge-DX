@@ -26,6 +26,9 @@ async function Register(req) {
         case "username-password":
             authenticationService.setStrategy(new UsernamePassword());
             break;
+        case "google":
+            authenticationService.setStrategy(new Google());
+            break;
         default:
             throw new Error("Invalid authentication strategy");
     }
