@@ -17,7 +17,7 @@ app.post('/login/:strategy', async (req, res) => {
         if (response.success) {
             res.json({ success: true, token: response.token, clearance: response.clearance });
         } else {
-            res.status(400).json({ success: false, message: 'Login failed' });
+            res.status(400).json({ success: false, message: response.message });
         }
     } catch (error) {
         console.error("Login error:", error);
