@@ -1,11 +1,16 @@
 import AuthenticationStrategyInterface from './AuthenticationStrategyInterface.js';
+import { UserDoesNotExist, IncorrectPassword, AccountExists } from '../errors';
+import { SuccessfulLogin, SuccessfulRegister } from '../responses';
 
 import { query } from "../../../config/db.js";
 import jwt from "jsonwebtoken"; 
 import bcrypt from 'bcrypt'; 
 import config from 'config';
-const jwtSecret = config.get('User.JWT_SECRET');
+const JWT = config.get('JWT');
 
+/**
+ * Strategy for authenticating with a username and password.
+ */
 class UsernamePassword extends AuthenticationStrategyInterface {
 
     /**
@@ -13,58 +18,54 @@ class UsernamePassword extends AuthenticationStrategyInterface {
     */    
 
     /**
-     * Authenticates the user using username and password
-     * @param {*} params - username and password
-     * @returns true if localStorage items set
+     * Authenticate a user
+     * @param {*} params - the username and password
+     * @returns SuccessfulLogin(token, clearance)
+     * @throws UserDoesNotExist(message), IncorrectPassword(message)
      */
     async authenticate(params) {
         // FUTURE ORM INSTEAD OF SQL
         let user = (await query("SELECT * from users WHERE username = ?", [params.username]))[0];
-        if (!user) throw "User does not exist." // prompt to register?
-
+        if (!user) throw new UserDoesNotExist("User does not exist.");
         let isPassword = await bcrypt.compare(params.password, user.password);
         if (isPassword) {
-            let userToken = jwt.sign(
-                { subject: user.id, clearance: user.clearance },
-                jwtSecret,
-                { expiresIn: '6h' }
-            );
-
-            return { success: true, token: userToken, clearance: user.clearance };
+            let userToken = jwt.sign({subject: user.id, clearance: user.clearance}, JWT.SECRET, {expiresIn: JWT.expires_in});
+            return new SuccessfulLogin("Log in success.", userToken, user.clearance);
         }
         else {
-            throw "Incorrect password."
+            throw new IncorrectPassword("Incorrect password.");
         }
-    }
-
-    refreshAuthToken() {
-        return;
     }
 
     /**
-     * Register a new user with email and password
-     * @param {*} params - username, password, and email + anything else needed
+     * Register a new user
+     * @param {*} params - username, password, email + anything else needed
+     * @returns SuccessfulRegister(message)
+     * @throws AccountExists(message, type)
      */
     async registerUser(params) {
         let user = await query("SELECT * FROM users WHERE username = ?", [params.username]);
         if (user.length > 0) {
             if (user[0].username === params.username) {
-                throw new Error("Username already taken.");
+                throw new AccountExists("Username already taken.", "Username");
             }
             if (user[0].email === params.email) {
-                throw new Error("Email already has a registered account."); // Prompt to login?
+                throw new AccountExists("Email already has a registered account.", "Email");
             }
         }
 
         let password = await hashPassword(params.password);
-
         let insertParams = [params.username, password, params.email];
 
         await query("INSERT INTO users (username, password, email) VALUES (?, ?, ?)", insertParams);
 
-        return { success: true, message: "User registered successfully." };
+        return new SuccessfulRegister("User registered successfully.");
     }
 
+    refreshAuthToken() {
+        return;
+    }
+    
     logOutUser() {
         return;
     }
@@ -75,12 +76,10 @@ class UsernamePassword extends AuthenticationStrategyInterface {
     * @returns 
     */
     async hashPassword(password) {
-        const saltRounds = 10;
-        const salt = await bcrypt.genSalt(saltRounds);
+        const salt = await bcrypt.genSalt(Math.floor(Math.random() * (100 - 10 + 1)) + 10);
         const hash = await bcrypt.hash(password, salt);
         return hash;
     }
-    
 }
 
 export default UsernamePassword;

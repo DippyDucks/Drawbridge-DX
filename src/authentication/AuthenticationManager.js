@@ -1,5 +1,5 @@
 import AuthenticationService from './AuthenticationService.js';
-import UsernamePassword from './strategy/UsernamePassword.js';
+import { UsernamePassword } from './strategy';
 
 const authenticationService = new AuthenticationService();
 
