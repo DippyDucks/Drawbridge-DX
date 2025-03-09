@@ -13,7 +13,7 @@ app.use(express.static('public'));
 // Directly use the model’s Login function as the route handler
 app.post('/login/:strategy', async (req, res) => {
     try {
-        const response = await Login(req);
+        const response = await Login(req.params.strategy, req.body);
         if (response.success) {
             res.json({ success: true, token: response.token, clearance: response.clearance });
         } else {
@@ -27,7 +27,7 @@ app.post('/login/:strategy', async (req, res) => {
 
 app.post('/register/:strategy', async (req, res) => {
     try {
-        const response = await Register(req);
+        const response = await Register(req.params.strategy, req.body);
         if (response.success) {
             res.json({ success: true, message: response.message });
         } else {

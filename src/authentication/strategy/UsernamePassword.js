@@ -7,8 +7,10 @@ import config from 'config';
 const jwtSecret = config.get('User.JWT_SECRET');
 
 class UsernamePassword extends AuthenticationStrategyInterface {
-    //should have constructor where it takes the database connection class, or it just takes the config. first option is better for OOP
-    //use ORM class for the constructor
+
+    /**
+     * TODO: Implement constructor to take in database connection file OR ORM
+    */    
 
     /**
      * Authenticates the user using username and password
@@ -36,7 +38,6 @@ class UsernamePassword extends AuthenticationStrategyInterface {
     }
 
     refreshAuthToken() {
-        // not needed? or needed for localStorage token?
         return;
     }
 
@@ -65,23 +66,21 @@ class UsernamePassword extends AuthenticationStrategyInterface {
     }
 
     logOutUser() {
-        localStorage.clear();
-        // reroute???
         return;
     }
-    
-}
 
-/**
- * Helper function to hash password with bcrypt
- * @param {*} password 
- * @returns 
- */
-async function hashPassword(password) {
-    const saltRounds = 10;
-    const salt = await bcrypt.genSalt(saltRounds);
-    const hash = await bcrypt.hash(password, salt);
-    return hash;
+    /**
+    * Helper function to hash password with bcrypt
+    * @param {*} password 
+    * @returns 
+    */
+    async hashPassword(password) {
+        const saltRounds = 10;
+        const salt = await bcrypt.genSalt(saltRounds);
+        const hash = await bcrypt.hash(password, salt);
+        return hash;
+    }
+    
 }
 
 export default UsernamePassword;

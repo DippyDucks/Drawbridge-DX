@@ -6,6 +6,9 @@
  * Interface for Authentication Strategies
  */
 class AuthenticationStrategyInterface {
+    /**
+     * TODO: Constructor to take in database connection file
+     */
 
     /**
      * Authenticate the user and log them in
