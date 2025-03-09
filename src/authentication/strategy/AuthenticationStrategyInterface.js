@@ -7,8 +7,12 @@
  */
 class AuthenticationStrategyInterface {
     /**
-     * TODO: Constructor to take in database connection file
+     * Constructor to allow injection of database configuration.
      */
+    constructor(ormInstance) {
+        super();
+        this.orm = ormInstance;
+    }
 
     /**
      * Authenticate the user and log them in

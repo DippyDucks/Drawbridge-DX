@@ -1,5 +1,6 @@
 import AuthenticationService from './AuthenticationService.js';
 import { UsernamePassword } from './strategy';
+import orm from '../../db/orm.js';
 
 const authenticationService = new AuthenticationService();
 
@@ -32,7 +33,7 @@ async function Register(strategy, params) {
 function SetStrategy(strategy) {
     switch (strategy) {
         case "username-password":
-            authenticationService.setStrategy(new UsernamePassword());
+            authenticationService.setStrategy(new UsernamePassword(orm));
             break;
         default:
             throw new Error("Invalid authentication strategy");
