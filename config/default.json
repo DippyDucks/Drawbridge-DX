@@ -1,9 +1,43 @@
 {
     "User": {
-        "dbConfig": {
-            "host": "",
-            "port": 0,
-            "dbName": "users"
+        "Database": {
+            "db_name": "Drawbridge",
+            "host": "127.0.0.1",
+            "port": 3306,
+            "db_username": "root",
+            "db_password": ""
+        },
+        "API": "http://localhost:3000/",
+        "JWT_SECRET": "a28072f93f9996e049d6fc813d457a43bcf86a671acac2de2a9e93befffaf4d7"
+    },
+    "AuthenticateStrategies": {
+        "Username": {
+            "active": true,
+            "Password": {
+                "active": true
+            },
+            "Email": {
+                "active": true
+            }
+        },
+        "SocialMedia": {
+            "active": false,
+            "Google": {
+                "active": false,
+                "Client_ID": "816018920557-75tu9l4dj92hkjkv8799ja136ijhgv1t.apps.googleusercontent.com"
+            },
+            "Instagram": {
+                "active": false
+            },
+            "Facebook": {
+                "active": false
+            },
+            "X": {
+                "active": false
+            }
+        },
+        "BoiseState": {
+            "active": false
         }
     }
 }
