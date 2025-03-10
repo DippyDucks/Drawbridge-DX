@@ -1,6 +1,9 @@
 import AuthenticationStrategyInterface from './AuthenticationStrategyInterface.js';
-import { UserDoesNotExist, IncorrectPassword, AccountExists } from '../errors';
-import { SuccessfulLogin, SuccessfulRegister } from '../responses';
+import UserDoesNotExist from '../errors/UserDoesNotExist.js';
+import IncorrectPassword from '../errors/IncorrectPassword.js';
+import AccountExists from '../errors/AccountExists.js';
+import SuccessfulLogin from '../responses/SuccessfulLogin.js';
+import SuccessfulRegister from '../responses/SuccessfulRegister.js';
 import User from '../../../db/Users.js';
 
 import jwt from "jsonwebtoken"; 
@@ -77,10 +80,10 @@ class UsernamePassword extends AuthenticationStrategyInterface {
     /**
     * Helper function to hash password with bcrypt
     * @param {*} password 
-    * @returns 
+    * @returns - hashed password
     */
     async hashPassword(password) {
-        const salt = await bcrypt.genSalt(Math.floor(Math.random() * (100 - 10 + 1)) + 10);
+        const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(password, salt);
         return hash;
     }

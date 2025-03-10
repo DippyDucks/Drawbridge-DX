@@ -1,16 +1,17 @@
 import { DataTypes } from 'sequelize';
-import orm from './orm';
+import orm from './orm.js';
 
-const Users = orm.define('Users', {
+const Users = orm.define('users', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
-    autoIncrement: true
+    autoIncrement: true,
+    allowNull: false
   },
   user_id: {
     type: DataTypes.INTEGER,
     unique: true,
-    allowNull: false
+    allowNull: true
   },
   username: {
     type: DataTypes.STRING,
@@ -19,7 +20,7 @@ const Users = orm.define('Users', {
   },
   password: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: true
   },
   email: {
     type: DataTypes.STRING,
@@ -35,5 +36,7 @@ const Users = orm.define('Users', {
   tableName: 'users',
   timestamps: false
 });
+
+Users.sync();
 
 export default Users;

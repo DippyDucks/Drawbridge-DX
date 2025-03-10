@@ -10,7 +10,6 @@ class AuthenticationStrategyInterface {
      * Constructor to allow injection of database configuration.
      */
     constructor(ormInstance) {
-        super();
         this.orm = ormInstance;
     }
 

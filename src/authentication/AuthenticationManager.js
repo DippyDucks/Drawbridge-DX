@@ -1,5 +1,5 @@
 import AuthenticationService from './AuthenticationService.js';
-import { UsernamePassword } from './strategy';
+import UsernamePassword from './strategy/UsernamePassword.js';
 import orm from '../../db/orm.js';
 
 const authenticationService = new AuthenticationService();

@@ -11,4 +11,10 @@ const orm = new Sequelize({
   password: dbConfig.password
 });
 
+orm.authenticate().then(() => {
+  console.log('App is successfully connected to the database.');
+}).catch((error) => {
+ console.error('OOPS! Failed to connect', error);
+});
+
 export default orm;
