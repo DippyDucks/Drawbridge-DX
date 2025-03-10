@@ -1,47 +1,55 @@
 const API = "http://localhost:3000";
 
 async function Login(params, strategy) {
-    try {
-        const response = await fetch(`${API}/login/${strategy}`, {
-            method: 'POST',
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(params)
-        });
+    const response = await fetch(`${API}/login/${strategy}`, {
+        method: 'POST',
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(params)
+    });
 
-        const data = await response.json();
-
-        if (data.success) {
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('clearance', data.clearance);
-
-            window.location.href = 'success.html';
-        } 
-        else {
-            alert("Login failed: " + data.message);
+    if (!response.ok) {
+        const errorData = await response.json(); 
+        if (errorData.name === 'UserDoesNotExist') {
+            alert(errorData.message);
         }
-    } catch (error) {
-        console.error("Error:", error);
+        else if (errorData.name === 'IncorrectPassword') {
+            alert(errorData.message);
+        }
+        else {
+            alert("Unknown error: ", errorData.message);
+        }
+    }
+    else {
+        const data = await response.json();
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('clearance', data.clearance);
+        window.location.href = 'success.html';
     }
 }
 
 async function Register(params, strategy) {
-    try {
-        const response = await fetch(`${API}/register/${strategy}`, {
-            method: 'POST',
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(params)
-        });
+    const response = await fetch(`${API}/register/${strategy}`, {
+        method: 'POST',
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(params)
+    });
 
-        const data = await response.json();
-
-        if (data.success) {
-            window.location.href = 'index.html';
-        } 
-        else {
-            alert("Register failed: " + data.message);
+    if (!response.ok) {
+        const errorData = await response.json(); 
+        if (errorData.name === 'AccountExists') {
+            if (errorData.type === 'Username') {
+                alert(errorData.message);
+            }
+            else if (errorData.type === 'Email') {
+                alert(errorData.message);
+                // prompt a login
+            }
         }
-    } catch (error) {
-        console.error("Error:", error);
+    }
+    else {
+        const data = await response.json();
+        console.log("DATA: ", data);
+        window.location.href = 'index.html';
     }
 }
 

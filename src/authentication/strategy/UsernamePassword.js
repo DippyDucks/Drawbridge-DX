@@ -1,87 +1,92 @@
 import AuthenticationStrategyInterface from './AuthenticationStrategyInterface.js';
+import UserDoesNotExist from '../errors/UserDoesNotExist.js';
+import IncorrectPassword from '../errors/IncorrectPassword.js';
+import AccountExists from '../errors/AccountExists.js';
+import SuccessfulLogin from '../responses/SuccessfulLogin.js';
+import SuccessfulRegister from '../responses/SuccessfulRegister.js';
+import User from '../../../db/Users.js';
 
-import { query } from "../../../config/db.js";
 import jwt from "jsonwebtoken"; 
 import bcrypt from 'bcrypt'; 
 import config from 'config';
-const jwtSecret = config.get('User.JWT_SECRET');
+const JWT = config.get('JWT');
 
+/**
+ * Strategy for authenticating with a username and password.
+ * Constructor takes in an orm instance
+ */
 class UsernamePassword extends AuthenticationStrategyInterface {
-    //should have constructor where it takes the database connection class, or it just takes the config. first option is better for OOP
-    //use ORM class for the constructor
+    constructor(ormInstance) {
+        super();
+        this.orm = ormInstance || User.orm;
+    }  
 
     /**
-     * Authenticates the user using username and password
-     * @param {*} params - username and password
-     * @returns true if localStorage items set
+     * Authenticate a user
+     * @param {*} params - the username and password
+     * @returns SuccessfulLogin(token, clearance)
+     * @throws UserDoesNotExist(message), IncorrectPassword(message)
      */
     async authenticate(params) {
-        // FUTURE ORM INSTEAD OF SQL
-        let user = (await query("SELECT * from users WHERE username = ?", [params.username]))[0];
-        if (!user) throw "User does not exist." // prompt to register?
-
+        let user = await User.findOne({ where: { username: params.username } });
+        if (!user) throw new UserDoesNotExist("User does not exist.");
+        
         let isPassword = await bcrypt.compare(params.password, user.password);
         if (isPassword) {
-            let userToken = jwt.sign(
-                { subject: user.id, clearance: user.clearance },
-                jwtSecret,
-                { expiresIn: '6h' }
-            );
-
-            return { success: true, token: userToken, clearance: user.clearance };
+            let userToken = jwt.sign({subject: user.id, clearance: user.clearance}, JWT.SECRET, {expiresIn: JWT.expires_in});
+            return new SuccessfulLogin("Log in success.", userToken, user.clearance);
         }
         else {
-            throw "Incorrect password."
+            throw new IncorrectPassword("Incorrect password.");
         }
+    }
+
+    /**
+     * Register a new user
+     * @param {*} params - username, password, email + anything else needed
+     * @returns SuccessfulRegister(message)
+     * @throws AccountExists(message, type)
+     */
+    async registerUser(params) {
+        let user = await User.findOne({ where: { username: params.username } });
+        if (user) {
+            throw new AccountExists("Username already taken.", "Username");
+        }
+
+        user = await User.findOne({ where: { email: params.email } });
+        if (user) {
+            throw new AccountExists("Email already has a registered account.", "Email");
+        }
+
+        let password = await this.hashPassword(params.password);
+
+        const newUser = await User.create({
+            username: params.username,
+            password: password,
+            email: params.email,
+        });
+
+        return new SuccessfulRegister("User registered successfully.", newUser.toJSON());
     }
 
     refreshAuthToken() {
-        // not needed? or needed for localStorage token?
+        return;
+    }
+
+    logOutUser() {
         return;
     }
 
     /**
-     * Register a new user with email and password
-     * @param {*} params - username, password, and email + anything else needed
-     */
-    async registerUser(params) {
-        let user = await query("SELECT * FROM users WHERE username = ?", [params.username]);
-        if (user.length > 0) {
-            if (user[0].username === params.username) {
-                throw new Error("Username already taken.");
-            }
-            if (user[0].email === params.email) {
-                throw new Error("Email already has a registered account."); // Prompt to login?
-            }
-        }
-
-        let password = await hashPassword(params.password);
-
-        let insertParams = [params.username, password, params.email];
-
-        await query("INSERT INTO users (username, password, email) VALUES (?, ?, ?)", insertParams);
-
-        return { success: true, message: "User registered successfully." };
+    * Helper function to hash password with bcrypt
+    * @param {*} password 
+    * @returns - hashed password
+    */
+    async hashPassword(password) {
+        const salt = await bcrypt.genSalt(10);
+        const hash = await bcrypt.hash(password, salt);
+        return hash;
     }
-
-    logOutUser() {
-        localStorage.clear();
-        // reroute???
-        return;
-    }
-    
-}
-
-/**
- * Helper function to hash password with bcrypt
- * @param {*} password 
- * @returns 
- */
-async function hashPassword(password) {
-    const saltRounds = 10;
-    const salt = await bcrypt.genSalt(saltRounds);
-    const hash = await bcrypt.hash(password, salt);
-    return hash;
 }
 
 export default UsernamePassword;

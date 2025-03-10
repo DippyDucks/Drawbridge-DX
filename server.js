@@ -1,7 +1,8 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import { Login, Register } from './models/AuthenticationModel.js';
+import { Login, Register } from './src/authentication/AuthenticationManager.js';
+import orm from './db/orm.js';
 
 const app = express();
 app.use(cors());
@@ -13,28 +14,19 @@ app.use(express.static('public'));
 // Directly use the model’s Login function as the route handler
 app.post('/login/:strategy', async (req, res) => {
     try {
-        const response = await Login(req);
-        if (response.success) {
-            res.json({ success: true, token: response.token, clearance: response.clearance });
-        } else {
-            res.status(400).json({ success: false, needsRegistration: response.needsRegistration, userID: response.userID, email: response.email, message: response.message });
-        }
-    } catch (error) {
-        console.error("Login error:", error);
-        res.status(500).json({ success: false, message: error });
+        const response = await Login(req.params.strategy, req.body);
+        res.json(response);
+    } catch (err) {
+        res.status(err.status || 500).json(err);
     }
 });
 
 app.post('/register/:strategy', async (req, res) => {
     try {
-        const response = await Register(req);
-        if (response.success) {
-            res.json({ success: true, message: response.message });
-        } else {
-            res.status(400).json({ success: false, message: 'Register failed' });
-        }
-    } catch (error) {
-        res.status(500).json({});
+        const response = await Register(req.params.strategy, req.body);
+        res.json(response);
+    } catch (err) {
+        res.status(err.status || 500).json(err);
     }
 });
 

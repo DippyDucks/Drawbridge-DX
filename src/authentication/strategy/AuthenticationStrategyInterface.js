@@ -6,6 +6,12 @@
  * Interface for Authentication Strategies
  */
 class AuthenticationStrategyInterface {
+    /**
+     * Constructor to allow injection of database configuration.
+     */
+    constructor(ormInstance) {
+        this.orm = ormInstance;
+    }
 
     /**
      * Authenticate the user and log them in

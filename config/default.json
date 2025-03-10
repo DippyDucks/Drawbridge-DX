@@ -1,14 +1,16 @@
 {
-    "User": {
-        "Database": {
-            "db_name": "Drawbridge",
-            "host": "127.0.0.1",
-            "port": 3306,
-            "db_username": "root",
-            "db_password": ""
-        },
-        "API": "http://localhost:3000/",
-        "JWT_SECRET": "a28072f93f9996e049d6fc813d457a43bcf86a671acac2de2a9e93befffaf4d7"
+    "API": "http://localhost:3000/",
+    "Database": {
+        "dialect": "mysql",
+        "host": "127.0.0.1",
+        "name": "drawbridge",
+        "port": 3306,
+        "username": "root",
+        "password": "root"
+    },
+    "JWT": {
+        "SECRET": "a28072f93f9996e049d6fc813d457a43bcf86a671acac2de2a9e93befffaf4d7",
+        "expires_in": "6h"
     },
     "AuthenticateStrategies": {
         "Username": {
