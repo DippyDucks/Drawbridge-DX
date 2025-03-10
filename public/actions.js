@@ -56,7 +56,7 @@ async function Register(params, strategy) {
 export {Login, Register}
 document.addEventListener("DOMContentLoaded", () => {
     // Check if the login button exists (for index.html)
-   /* const loginButton = document.getElementById("loginButton");
+    const loginButton = document.getElementById("loginButton");
     if (loginButton) {
         loginButton.addEventListener("click", () => {
             const username = document.getElementById("username").value;
@@ -79,7 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const params = { username, password, email };
             Register(params, "username-password");
         });
-    }*/
+    }
     const googleRegisterButton = document.getElementById("googleRegisterButton");
     if (googleRegisterButton) {
         googleRegisterButton.addEventListener("click", () => {
