@@ -21,11 +21,9 @@
   <script>
     // Callback function to handle the credential response
     function handleCredentialResponse(response) {
-      console.log("Received Credential Response:", response);
 
       // Extract the ID Token from the response
       const id_token = response.credential;
-      console.log("ID Token:", id_token);
 
       // You can send this ID token to your backend for verification
       fetch("/login/google", {
@@ -37,7 +35,6 @@
       })
         .then(res => res.json())
         .then(data => {
-          console.log("Response from server:", data);
           if (data.success) {
             window.location.href = 'success.html';
           }

@@ -34,7 +34,6 @@ app.post('/register/:strategy', async (req, res) => {
             res.status(400).json({ success: false, message: 'Register failed' });
         }
     } catch (error) {
-        console.error("Register error:", error);
         res.status(500).json({});
     }
 });

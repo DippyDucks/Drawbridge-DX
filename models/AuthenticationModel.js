@@ -1,5 +1,5 @@
 import AuthenticationService from '../src/authentication/AuthenticationService.js';
-import { Google } from '../src/authentication/strategy/SocialMedia.js';
+import Google  from '../src/authentication/strategy/Google.js';
 import UsernamePassword from '../src/authentication/strategy/UsernamePassword.js';
 
 async function Login(req) {

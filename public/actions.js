@@ -1,7 +1,6 @@
 const API = "http://localhost:3000";
 
 async function Login(params, strategy) {
-    console.log("inside actions.Login");
     try {
         const response = await fetch(`${API}/login/${strategy}`, {
             method: 'POST',
@@ -10,7 +9,6 @@ async function Login(params, strategy) {
         });
 
         const data = await response.json();
-        console.log("Login Response:", data);
 
         if (data.success) {
             localStorage.setItem('token', data.token);
