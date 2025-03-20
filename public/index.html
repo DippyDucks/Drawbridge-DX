@@ -28,15 +28,18 @@
     data-shape="rectangular" data-logo_alignment="left">
   </div>
 
-  <script>
-    // Callback function to handle the credential response
-    function handleCredentialResponse(response) {
+  <script type="module">
+    
+    import {Login, Register} from './actions.js';
 
+    // Callback function to handle the credential response
+    window.handleCredentialResponse = function(response) {
       // Extract the ID Token from the response
       const id_token = response.credential;
+      Login({id_token}, "google");
 
       // You can send this ID token to your backend for verification
-      fetch("/login/google", {
+      /*fetch("/login/google", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -59,7 +62,7 @@
         })
         .catch(err => {
           console.error("Error sending token to server:", err);
-        });
+        });*/
     }
   </script>
 </body>

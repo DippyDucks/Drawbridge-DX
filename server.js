@@ -7,6 +7,7 @@ import orm from './db/orm.js';
 const app = express();
 app.use(cors());
 app.use(bodyParser.json()); // Parse JSON body
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // Serve static files (HTML, JS, CSS)
 app.use(express.static('public'));

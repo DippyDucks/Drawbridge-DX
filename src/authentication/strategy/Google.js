@@ -1,21 +1,32 @@
 import AuthenticationStrategyInterface from './AuthenticationStrategyInterface.js';
 import { OAuth2Client } from 'google-auth-library';
-import { query } from "../../../config/db.js";
 import jwt from "jsonwebtoken";
 import config from 'config';
+import User from '../../../db/Users.js'
+import UserDoesNotExist from '../errors/UserDoesNotExist.js';
+import IncorrectPassword from '../errors/IncorrectPassword.js';
+import AccountExists from '../errors/AccountExists.js';
+import SuccessfulLogin from '../responses/SuccessfulLogin.js';
+import SuccessfulRegister from '../responses/SuccessfulRegister.js';
+
 const ClientID = config.get('AuthenticateStrategies.SocialMedia.Google.Client_ID');
 const client = new OAuth2Client(ClientID);
-const jwtSecret = config.get("User.JWT_SECRET");
+const jwtSecret = config.get("JWT.SECRET");
 
 
 class Google extends AuthenticationStrategyInterface {
     /**
-     * TODO: constructor for getting database info
+     *  constructor for getting database info
      */
+    constructor(ormInstance) {
+        super();
+        this.orm = ormInstance || User.orm;
+    }
     /**
      * concrete method
      */
     async authenticate(params) {
+        console.log("inside google authenticate method");
         //verify ID token
         try {
             const ticket = await client.verifyIdToken({
@@ -32,7 +43,9 @@ class Google extends AuthenticationStrategyInterface {
             const userID = payload['sub']; //google's unique user ID
             const email = payload.email //user's email address
 
-            let user = (await query("SELECT * FROM users WHERE email = ? AND user_id = ?", [email, userID]))[0];
+            console.log("payload: ", payload);
+
+            let user = await User.findOne({ where: { email: email, user_id: userID } });
             if (!user) return { success: false, needsRegistration: true, userID, email, message: "User does not exist, prompting registration." };
 
             //jwt token for existing user
@@ -42,7 +55,7 @@ class Google extends AuthenticationStrategyInterface {
                 { expiresIn: '6h' }
             );
 
-            return { success: true, token: userToken, clearance: user.clearance };
+            return new SuccessfulLogin("Log in success.", userToken, user.clearance);
         }
         catch (error) {
             console.error("Error verifying token:", error);
@@ -58,13 +71,8 @@ class Google extends AuthenticationStrategyInterface {
     }
 
     async registerUser(params) {
-            let insertParams = [params.email, params.userID];
-            
-            await query("INSERT INTO users (email, user_id) VALUES (?, ?)", insertParams);
-        
 
-
-
+        await User.create({ email: params.email, user_id: params.userID });
 
         return { success: true, message: "User registered successfully." };
     }
