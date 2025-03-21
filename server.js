@@ -16,8 +16,11 @@ app.use(express.static('public'));
 app.post('/login/:strategy', async (req, res) => {
     try {
         const response = await Login(req.params.strategy, req.body);
+        res.setHeader("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
+    res.setHeader("Cross-Origin-Embedder-Policy", "unsafe-none");
         res.json(response);
     } catch (err) {
+        console.log("server.js err: ", err);
         res.status(err.status || 500).json(err);
     }
 });

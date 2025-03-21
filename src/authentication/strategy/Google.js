@@ -4,10 +4,11 @@ import jwt from "jsonwebtoken";
 import config from 'config';
 import User from '../../../db/Users.js'
 import UserDoesNotExist from '../errors/UserDoesNotExist.js';
-import IncorrectPassword from '../errors/IncorrectPassword.js';
+import BadToken from '../errors/BadToken.js';
 import AccountExists from '../errors/AccountExists.js';
 import SuccessfulLogin from '../responses/SuccessfulLogin.js';
 import SuccessfulRegister from '../responses/SuccessfulRegister.js';
+
 
 const ClientID = config.get('AuthenticateStrategies.SocialMedia.Google.Client_ID');
 const client = new OAuth2Client(ClientID);
@@ -26,27 +27,30 @@ class Google extends AuthenticationStrategyInterface {
      * concrete method
      */
     async authenticate(params) {
-        console.log("inside google authenticate method");
         //verify ID token
-        try {
             const ticket = await client.verifyIdToken({
-                idToken: params.idToken,
+                idToken: params.id_token,
                 audience: ClientID
             });
 
             if (!ticket) {
-                throw 'somethings wrong with the ticket :('
+                throw new BadToken("There was an issue verifying the token.");
             }
 
             //get user's payload (info)
             const payload = ticket.getPayload();
             const userID = payload['sub']; //google's unique user ID
-            const email = payload.email //user's email address
+            const email = payload.email; //user's email address
+            const givenName = payload.given_name;
+            const familyName = payload.family_name;
 
-            console.log("payload: ", payload);
+            console.log("payload", payload);
 
             let user = await User.findOne({ where: { email: email, user_id: userID } });
-            if (!user) return { success: false, needsRegistration: true, userID, email, message: "User does not exist, prompting registration." };
+            if (!user){
+                console.log("whoopsie!!");
+                throw new UserDoesNotExist("User does not exist.", {email: email, userID: userID, username: givenName+familyName});
+            } 
 
             //jwt token for existing user
             let userToken = jwt.sign(
@@ -55,14 +59,8 @@ class Google extends AuthenticationStrategyInterface {
                 { expiresIn: '6h' }
             );
 
+            console.log("success? maybe???");
             return new SuccessfulLogin("Log in success.", userToken, user.clearance);
-        }
-        catch (error) {
-            console.error("Error verifying token:", error);
-            return { success: false, message: error };
-        }
-
-
     }
 
     refreshAuthToken() {
@@ -71,10 +69,11 @@ class Google extends AuthenticationStrategyInterface {
     }
 
     async registerUser(params) {
+        console.log("register user params: ", params);
 
-        await User.create({ email: params.email, user_id: params.userID });
+        const newUser = await User.create({ email: params.email, user_id: params.userID, username: params.username });
 
-        return { success: true, message: "User registered successfully." };
+        return new SuccessfulRegister("User registered successfully.", newUser.toJSON());
     }
 
     logOutUser(params) {
