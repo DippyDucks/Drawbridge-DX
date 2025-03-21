@@ -13,6 +13,15 @@ import SuccessfulRegister from "../../src/authentication/responses/SuccessfulReg
 
 beforeAll(async () => {
   await orm.authenticate(); 
+  let password = await new UsernamePassword(orm).hashPassword("leiadog12");
+  let res = await Users.findOne({ where: { username: "JC" } });
+  if (!res) {
+    await Users.create({
+      username: "JC",
+      password: password,
+      email: "leiadog11@gmail.com",
+    });
+  }
 });
 
 ////////////////////////
