@@ -1,6 +1,7 @@
 const API = "http://localhost:3000";
 
 async function Login(params, strategy) {
+    console.log("PARAMS: ", params);
     const response = await fetch(`${API}/login/${strategy}`, {
         method: 'POST',
         headers: { "Content-Type": "application/json" },
@@ -53,7 +54,6 @@ async function Register(params, strategy) {
     }
 }
 
-export {Login, Register}
 document.addEventListener("DOMContentLoaded", () => {
     // Check if the login button exists (for index.html)
     const loginButton = document.getElementById("loginButton");
@@ -93,3 +93,5 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 });
+
+export {Login, Register}

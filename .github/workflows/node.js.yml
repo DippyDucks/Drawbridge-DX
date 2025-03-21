@@ -50,3 +50,4 @@ jobs:
           done
           echo "MySQL is up and running!"
     - run: node server.js
+    - run: npm test

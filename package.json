@@ -1,4 +1,9 @@
 {
+  "name": "drawbridge",
+  "type": "module",
+  "scripts": { 
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+  },
   "dependencies": {
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.3",
@@ -6,9 +11,10 @@
     "cors": "^2.8.5",
     "express": "^4.21.2",
     "google-auth-library": "^9.15.1",
+    "jest": "^29.7.0",
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.13.0",
+    "save-dev": "^0.0.1-security",
     "sequelize": "^6.37.6"
-  },
-  "type": "module"
+  }
 }
