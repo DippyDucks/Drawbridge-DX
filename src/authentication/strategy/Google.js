@@ -68,12 +68,15 @@ class Google extends AuthenticationStrategyInterface {
         let username = params.username;
         let user = await User.findOne({where: {username: params.username}});
         if (user) {  
+            throw new AccountExists("Username already taken.", "Username");
+            
+            /*not sure if i should do this, since whoever used this package may want to do something different, like allow the user to choose their username, or append a different amount of digits, or something else.
             // Keep generating a new username until we find a unique one
             do {
                 let randomNum = Math.floor(100000 + Math.random() * 900000); // Generate a random 6-digit number
                 username = `${params.username}${randomNum}`;
                 user = await User.findOne({ where: { username: username } }); // Check if this new username exists
-            } while (user);  // Repeat if the username is already taken
+            } while (user);  // Repeat if the username is already taken*/
         }
 
         const newUser = await User.create({ email: params.email, user_id: params.userID, username: username });
