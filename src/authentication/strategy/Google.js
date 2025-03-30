@@ -44,11 +44,8 @@ class Google extends AuthenticationStrategyInterface {
             const givenName = payload.given_name;
             const familyName = payload.family_name;
 
-            console.log("payload", payload);
-
             let user = await User.findOne({ where: { email: email, user_id: userID } });
             if (!user){
-                console.log("whoopsie!!");
                 throw new UserDoesNotExist("User does not exist.", {email: email, userID: userID, username: givenName+familyName});
             } 
 
@@ -59,7 +56,6 @@ class Google extends AuthenticationStrategyInterface {
                 { expiresIn: '6h' }
             );
 
-            console.log("success? maybe???");
             return new SuccessfulLogin("Log in success.", userToken, user.clearance);
     }
 
@@ -69,9 +65,18 @@ class Google extends AuthenticationStrategyInterface {
     }
 
     async registerUser(params) {
-        console.log("register user params: ", params);
+        let username = params.username;
+        let user = await User.findOne({where: {username: params.username}});
+        if (user) {  
+            // Keep generating a new username until we find a unique one
+            do {
+                let randomNum = Math.floor(100000 + Math.random() * 900000); // Generate a random 6-digit number
+                username = `${params.username}${randomNum}`;
+                user = await User.findOne({ where: { username: username } }); // Check if this new username exists
+            } while (user);  // Repeat if the username is already taken
+        }
 
-        const newUser = await User.create({ email: params.email, user_id: params.userID, username: params.username });
+        const newUser = await User.create({ email: params.email, user_id: params.userID, username: username });
 
         return new SuccessfulRegister("User registered successfully.", newUser.toJSON());
     }

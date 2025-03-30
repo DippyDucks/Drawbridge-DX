@@ -1,7 +1,6 @@
 const API = "http://localhost:3000";
 
 async function Login(params, strategy) {
-    console.log("login params: ", params);
     const response = await fetch(`${API}/login/${strategy}`, {
         method: 'POST',
         headers: { "Content-Type": "application/json" },
@@ -13,13 +12,7 @@ async function Login(params, strategy) {
         if (errorData.name === 'UserDoesNotExist') {
             alert(errorData.message);
             if(errorData.data){
-                if (window.confirm("Do you want to create an account with this information?\n Username: "+ errorData.data.username + "\n Email: "+ errorData.data.email )) {
-                   //await Register(errorData.data, strategy);
-                   //do something to make register happen
-                   console.log("oh yeah were registering");
-                  } else {
-                    console.log("not creating an account");
-                  }
+                await Register(errorData.data, strategy);
             }
         }
         else if (errorData.name === 'IncorrectPassword') {
@@ -58,7 +51,6 @@ async function Register(params, strategy) {
     }
     else {
         const data = await response.json();
-        console.log("DATA: ", data);
         window.location.href = 'index.html';
     }
 }
