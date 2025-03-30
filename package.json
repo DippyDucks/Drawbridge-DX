@@ -1,4 +1,9 @@
 {
+  "name": "drawbridge", 
+  "type": "module", 
+  "scripts": {
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+  },
   "dependencies": {
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.3",
@@ -10,5 +15,7 @@
     "mysql2": "^3.13.0",
     "sequelize": "^6.37.6"
   },
-  "type": "module"
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
 }
