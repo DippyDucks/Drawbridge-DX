@@ -18,6 +18,9 @@ async function Login(params, strategy) {
         else if (errorData.name === 'IncorrectPassword') {
             alert(errorData.message);
         }
+        else if(errorData.name === 'BadToken'){
+            alert(errorData.message);
+        }
         else {
             alert("Unknown error: ", errorData.message);
         }

@@ -37,7 +37,7 @@
     window.handleCredentialResponse = function(response) {
       // Extract the ID Token from the response
       const id_token = response.credential;
-      console.log("id_token: ", id_token);
+      //console.log("id_token: ", id_token);
       Login({id_token}, "google");
 
     }

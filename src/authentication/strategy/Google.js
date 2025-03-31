@@ -28,35 +28,36 @@ class Google extends AuthenticationStrategyInterface {
      */
     async authenticate(params) {
         //verify ID token
-            const ticket = await client.verifyIdToken({
+        let ticket;
+        try {
+            ticket = await client.verifyIdToken({
                 idToken: params.id_token,
                 audience: ClientID
             });
+        } catch (error) {
+            throw new BadToken("There was an issue verifying the token.");
+        }
 
-            if (!ticket) {
-                throw new BadToken("There was an issue verifying the token.");
-            }
+        //get user's payload (info)
+        const payload = ticket.getPayload();
+        const userID = payload['sub']; //google's unique user ID
+        const email = payload.email; //user's email address
+        const givenName = payload.given_name;
+        const familyName = payload.family_name;
 
-            //get user's payload (info)
-            const payload = ticket.getPayload();
-            const userID = payload['sub']; //google's unique user ID
-            const email = payload.email; //user's email address
-            const givenName = payload.given_name;
-            const familyName = payload.family_name;
+        let user = await User.findOne({ where: { email: email, user_id: userID } });
+        if (!user) {
+            throw new UserDoesNotExist("User does not exist.", { email: email, userID: userID, username: givenName + familyName });
+        }
 
-            let user = await User.findOne({ where: { email: email, user_id: userID } });
-            if (!user){
-                throw new UserDoesNotExist("User does not exist.", {email: email, userID: userID, username: givenName+familyName});
-            } 
+        //jwt token for existing user
+        let userToken = jwt.sign(
+            { subject: user.id, clearance: user.clearance },
+            jwtSecret,
+            { expiresIn: '6h' }
+        );
 
-            //jwt token for existing user
-            let userToken = jwt.sign(
-                { subject: user.id, clearance: user.clearance },
-                jwtSecret,
-                { expiresIn: '6h' }
-            );
-
-            return new SuccessfulLogin("Log in success.", userToken, user.clearance);
+        return new SuccessfulLogin("Log in success.", userToken, user.clearance);
     }
 
     refreshAuthToken() {
@@ -66,10 +67,10 @@ class Google extends AuthenticationStrategyInterface {
 
     async registerUser(params) {
         let username = params.username;
-        let user = await User.findOne({where: {username: params.username}});
-        if (user) {  
+        let user = await User.findOne({ where: { username: params.username } });
+        if (user) {
             throw new AccountExists("Username already taken.", "Username");
-            
+
             /*not sure if i should do this, since whoever used this package may want to do something different, like allow the user to choose their username, or append a different amount of digits, or something else.
             // Keep generating a new username until we find a unique one
             do {
