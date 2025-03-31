@@ -27,4 +27,10 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: npm ci
-    - run: node server.js
+    - run: |
+          echo "Waiting for MySQL to start..."
+          until mysqladmin ping -h 127.0.0.1 -uroot -proot --silent; do
+            sleep 2
+          done
+          echo "MySQL is up and running!"
+    - run: npm test
