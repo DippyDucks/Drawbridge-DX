@@ -6,7 +6,7 @@
         "name": "drawbridge",
         "port": 3306,
         "username": "root",
-        "password": "Fr0gusL0gusD0gus!"
+        "password": ""
     },
     "JWT": {
         "SECRET": "a28072f93f9996e049d6fc813d457a43bcf86a671acac2de2a9e93befffaf4d7",
