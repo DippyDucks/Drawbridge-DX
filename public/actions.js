@@ -1,7 +1,6 @@
 const API = "http://localhost:3000";
 
 async function Login(params, strategy) {
-    console.log("PARAMS: ", params);
     const response = await fetch(`${API}/login/${strategy}`, {
         method: 'POST',
         headers: { "Content-Type": "application/json" },

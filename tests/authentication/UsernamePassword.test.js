@@ -3,9 +3,7 @@ import orm from '../../db/orm.js';
 import Users from "../../db/Users.js";
 
 import { UserDoesNotExist, IncorrectPassword, AccountExists } from '../../src/authentication/errors';
-
-import SuccessfulLogin from "../../src/authentication/responses/SuccessfulLogin.js";
-import SuccessfulRegister from "../../src/authentication/responses/SuccessfulRegister.js";
+import { SuccessfulLogin, SuccessfulRegister } from "../../src/authentication/responses";
 
 // BEFORE ALL
 

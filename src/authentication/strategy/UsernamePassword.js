@@ -1,8 +1,7 @@
 import AuthenticationStrategyInterface from './AuthenticationStrategyInterface.js';
 
 import { UserDoesNotExist, IncorrectPassword, AccountExists } from '../errors';
-import SuccessfulLogin from '../responses/SuccessfulLogin.js';
-import SuccessfulRegister from '../responses/SuccessfulRegister.js';
+import { SuccessfulLogin, SuccessfulRegister } from '../responses';
 import User from '../../../db/Users.js';
 
 import jwt from "jsonwebtoken"; 
