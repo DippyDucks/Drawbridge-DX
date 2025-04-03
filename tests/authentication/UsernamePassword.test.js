@@ -2,9 +2,7 @@ import UsernamePassword from "../../src/authentication/strategy/UsernamePassword
 import orm from '../../db/orm.js';
 import Users from "../../db/Users.js";
 
-import UserDoesNotExist from '../../src/authentication/errors/UserDoesNotExist.js';
-import IncorrectPassword from "../../src/authentication/errors/IncorrectPassword.js";
-import AccountExists from "../../src/authentication/errors/AccountExists.js";
+import { UserDoesNotExist, IncorrectPassword, AccountExists } from '../../src/authentication/errors';
 
 import SuccessfulLogin from "../../src/authentication/responses/SuccessfulLogin.js";
 import SuccessfulRegister from "../../src/authentication/responses/SuccessfulRegister.js";

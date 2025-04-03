@@ -1,7 +1,6 @@
 import AuthenticationStrategyInterface from './AuthenticationStrategyInterface.js';
-import UserDoesNotExist from '../errors/UserDoesNotExist.js';
-import IncorrectPassword from '../errors/IncorrectPassword.js';
-import AccountExists from '../errors/AccountExists.js';
+
+import { UserDoesNotExist, IncorrectPassword, AccountExists } from '../errors';
 import SuccessfulLogin from '../responses/SuccessfulLogin.js';
 import SuccessfulRegister from '../responses/SuccessfulRegister.js';
 import User from '../../../db/Users.js';
