@@ -53,7 +53,6 @@ async function Register(params, strategy) {
     }
 }
 
-export {Login, Register}
 document.addEventListener("DOMContentLoaded", () => {
     // Check if the login button exists (for index.html)
     const loginButton = document.getElementById("loginButton");
@@ -93,3 +92,5 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 });
+
+export {Login, Register}

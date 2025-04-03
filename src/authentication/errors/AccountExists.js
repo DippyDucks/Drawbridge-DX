@@ -8,4 +8,4 @@ class AccountExists extends Error {
     }
 }
 
-export default AccountExists;
+export { AccountExists }

@@ -7,4 +7,4 @@ class SuccessfulLogin {
     }
 }
 
-export default SuccessfulLogin;
+export { SuccessfulLogin }
