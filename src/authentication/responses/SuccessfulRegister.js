@@ -5,4 +5,4 @@ class SuccessfulRegister {
     }
 }
 
-export default SuccessfulRegister;
+export { SuccessfulRegister }

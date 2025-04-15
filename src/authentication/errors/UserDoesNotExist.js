@@ -8,4 +8,4 @@ class UserDoesNotExist extends Error {
     }
 }
 
-export default UserDoesNotExist;
+export { UserDoesNotExist }

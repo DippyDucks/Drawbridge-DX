@@ -7,4 +7,4 @@ class IncorrectPassword extends Error {
     }
 }
 
-export default IncorrectPassword;
+export { IncorrectPassword }

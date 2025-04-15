@@ -2,7 +2,6 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import { Login, Register } from './src/authentication/AuthenticationManager.js';
-import orm from './db/orm.js';
 
 const app = express();
 app.use(cors());
