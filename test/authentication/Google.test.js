@@ -1,10 +1,8 @@
 import Google from '../../src/authentication/strategy/Google';
 import orm from '../../db/orm.js';
 import Users from '../../db/Users.js';
-import jwt from 'jsonwebtoken';
-import fs from "fs";
 import config from 'config';
-const jwtSecret = config.get("JWT.SECRET");
+const testingInfo = config.get("AuthenticateStrategies.SocialMedia.Google.Testing_Info");
 
 import BadToken from '../../src/authentication/errors/BadToken.js';
 import UserDoesNotExist from '../../src/authentication/errors/UserDoesNotExist.js';
@@ -14,43 +12,60 @@ import SuccessfulLogin from "../../src/authentication/responses/SuccessfulLogin.
 import SuccessfulRegister from "../../src/authentication/responses/SuccessfulRegister.js";
 
 // BEFORE ALL
-// Read the private key
-const privateKey = fs.readFileSync('private.pem', 'utf8');
+let realIdToken;
+let noUserIdToken;
 
-//genrate test tokens
-const generateTestToken = (payload = {}) => {
-    //const privateKey = privateKey; // Replace with an actual private key if needed.
-    
-    return jwt.sign(
-        {
-            iss: "https://accounts.google.com",
-            azp: "test_client_id",
-            aud: "test_client_id",
-            sub: payload.sub || "10351644986998860000", // Test user ID
-            email: payload.email || "testingdrawbridge@gmail.com",
-            email_verified: true,
-            name: payload.name || "Valid Testing",
-            picture: payload.picture || "https://example.com/profile.jpg",
-            iat: Math.floor(Date.now() / 1000),
-            exp: Math.floor(Date.now() / 1000) + 3600, // Expires in 1 hour
-            jti: "test_jti"
-        },
-        privateKey, // Use a real private key if necessary
-        { algorithm: "RS256" } // Use RS256 if matching Google JWTs
-    );
-};
-
-//creates a new user to test first if you need it.
 beforeAll(async () => {
-    await orm.authenticate();
-    let res = await Users.findOne({ where: { user_id: "10351644986998860000" } });
+  //create user
+  await orm.authenticate();
+  //creates a new user to test first if you need it. replace the user_id and email with the user_id and email that the valid token should hold 
+    let res = await Users.findOne({ where: { user_id: "113988717388707456508" } });
     if (!res) {
         await Users.create({
             username: "ValidTest",
-            user_id: "10351644986998860000",
-            email: "testvalid@gmail.com",
+            user_id: "113988717388707456508",
+            email: "rebeccanovis@u.boisestate.edu",
         });
     }
+  //get real id token (valid, user was just created)
+  const response = await fetch('https://oauth2.googleapis.com/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      client_id: testingInfo.Client_ID,
+      client_secret: testingInfo.Client_Secret,
+      refresh_token: testingInfo.Valid_Refresh_Token,
+      grant_type: 'refresh_token',
+    }),
+  });
+
+  const data = await response.json();
+
+  if (!data.id_token) {
+    throw new Error(`Failed to fetch id_token: ${JSON.stringify(data)}`);
+  }
+  console.log("!!! data: ", data);
+  realIdToken = data.id_token;
+
+  //get real id token (not valid, user doesn't exist)
+  const noUserResponse = await fetch('https://oauth2.googleapis.com/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      client_id: testingInfo.Client_ID,
+      client_secret: testingInfo.Client_Secret,
+      refresh_token: testingInfo.Invalid_Refresh_Token,
+      grant_type: 'refresh_token',
+    }),
+  });
+
+  const invalidData = await noUserResponse.json();
+
+  if (!invalidData.id_token) {
+    throw new Error(`Failed to fetch id_token: ${JSON.stringify(invalidData)}`);
+  }
+
+  noUserIdToken = invalidData.id_token;
 });
 
 ////////////////////////
@@ -63,20 +78,12 @@ test('User trying to log in with a bad token should throw BadToken error', async
 });
 
 test('User that does not exist trying to log in should throw UserDoesNotExist error', async () => {
-    const fakeToken = generateTestToken({
-        sub: "non_existent_user",
-        email: "doesnotexist@example.com"
-    })
-    await expect(new Google(orm).authenticate({ "id_token": fakeToken }))
+    await expect(new Google(orm).authenticate({ "id_token": noUserIdToken }))
         .rejects.toThrow(UserDoesNotExist);
 });
 
 test('User with an id_token that contains a user_id and email that already exist should get a SuccessfulLogin response', async () => {
-    const validToken = generateTestToken({
-        sub: "10351644986998860000",
-        email: "testvalid@gmail.com"
-    })
-    const response = await new Google(orm).authenticate({ "id_token": validToken});
+    const response = await new Google(orm).authenticate({ "id_token": realIdToken});
     expect(response).toBeInstanceOf(SuccessfulLogin);
 });
 
@@ -84,7 +91,7 @@ test('User with an id_token that contains a user_id and email that already exist
 // REGISTER TESTS
 ////////////////////////
 test('User registering with an username already registered should throw AccountExists error with type Username', async () => {
-    await expect(new Google(orm).registerUser({ "username": "DrawbridgeTesting" }))
+    await expect(new Google(orm).registerUser({ "username": "ValidTest" }))
         .rejects
         .toThrowError(new AccountExists('Username already taken.', { type: 'Username' }));
 });
