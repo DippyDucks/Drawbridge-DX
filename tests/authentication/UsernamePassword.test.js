@@ -8,7 +8,8 @@ import { SuccessfulLogin, SuccessfulRegister } from "../../src/authentication/re
 // BEFORE ALL
 
 beforeAll(async () => {
-  await orm.authenticate(); 
+  await orm.authenticate();
+  await Users.sync(); 
   let password = await new UsernamePassword(orm).hashPassword("leiadog12");
   let res = await Users.findOne({ where: { username: "JC" } });
   if (!res) {
