@@ -14,6 +14,7 @@ let noUserIdToken;
 beforeAll(async () => {
   //create user
   await orm.authenticate();
+  await Users.sync(); 
   //creates a new user to test first if you need it. replace the user_id and email with the user_id and email that the valid token should hold 
     let res = await Users.findOne({ where: { user_id: "113988717388707456508" } });
     if (!res) {
