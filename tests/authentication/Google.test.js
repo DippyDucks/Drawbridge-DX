@@ -1,15 +1,11 @@
-import Google from '../../src/authentication/strategy/Google';
+import Google from '../../src/authentication/strategy/Google.js';
 import orm from '../../db/orm.js';
 import Users from '../../db/Users.js';
 import config from 'config';
 const testingInfo = config.get("AuthenticateStrategies.SocialMedia.Google.Testing_Info");
 
-import BadToken from '../../src/authentication/errors/BadToken.js';
-import UserDoesNotExist from '../../src/authentication/errors/UserDoesNotExist.js';
-import AccountExists from '../../src/authentication/errors/AccountExists.js';
-
-import SuccessfulLogin from "../../src/authentication/responses/SuccessfulLogin.js";
-import SuccessfulRegister from "../../src/authentication/responses/SuccessfulRegister.js";
+import { UserDoesNotExist, BadToken, AccountExists } from '../../src/authentication/errors/index.js';
+import { SuccessfulLogin, SuccessfulRegister } from "../../src/authentication/responses/index.js";
 
 // BEFORE ALL
 let realIdToken;

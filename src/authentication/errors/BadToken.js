@@ -7,4 +7,4 @@ class BadToken extends Error {
     }
 }
 
-export default BadToken;
+export {BadToken};

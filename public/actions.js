@@ -57,6 +57,7 @@ async function Register(params, strategy) {
         window.location.href = 'index.html';
     }
 }
+export {Login, Register}
 
 document.addEventListener("DOMContentLoaded", () => {
     // Check if the login button exists (for index.html)
@@ -97,4 +98,4 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 });
-export {Login, Register}
+

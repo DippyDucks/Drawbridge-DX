@@ -3,12 +3,8 @@ import { OAuth2Client } from 'google-auth-library';
 import jwt from "jsonwebtoken";
 import config from 'config';
 import User from '../../../db/Users.js'
-import UserDoesNotExist from '../errors/UserDoesNotExist.js';
-import BadToken from '../errors/BadToken.js';
-import AccountExists from '../errors/AccountExists.js';
-import SuccessfulLogin from '../responses/SuccessfulLogin.js';
-import SuccessfulRegister from '../responses/SuccessfulRegister.js';
-
+import { UserDoesNotExist, BadToken, AccountExists } from '../errors';
+import { SuccessfulLogin, SuccessfulRegister } from "../responses";
 
 const ClientID = config.get('AuthenticateStrategies.SocialMedia.Google.Client_ID');
 const client = new OAuth2Client(ClientID);
