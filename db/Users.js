@@ -9,7 +9,7 @@ const Users = orm.define('users', {
     allowNull: false
   },
   user_id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     unique: true,
     allowNull: true
   },
