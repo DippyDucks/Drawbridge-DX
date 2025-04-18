@@ -11,8 +11,14 @@ async function Login(params, strategy) {
         const errorData = await response.json(); 
         if (errorData.name === 'UserDoesNotExist') {
             alert(errorData.message);
+            if(errorData.data){
+                await Register(errorData.data, strategy);
+            }
         }
         else if (errorData.name === 'IncorrectPassword') {
+            alert(errorData.message);
+        }
+        else if(errorData.name === 'BadToken'){
             alert(errorData.message);
         }
         else {
@@ -48,10 +54,10 @@ async function Register(params, strategy) {
     }
     else {
         const data = await response.json();
-        console.log("DATA: ", data);
         window.location.href = 'index.html';
     }
 }
+export {Login, Register}
 
 document.addEventListener("DOMContentLoaded", () => {
     // Check if the login button exists (for index.html)
@@ -93,4 +99,3 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-export {Login, Register}

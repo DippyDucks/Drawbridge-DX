@@ -3,11 +3,7 @@
 
 name: Node.js CI
 
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+on: ['push', 'pull_request']
 
 jobs:
   build:
@@ -32,7 +28,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: ['22.13.0']
+        node-version: ['22.14.0']
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:

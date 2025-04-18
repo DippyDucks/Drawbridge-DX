@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Google Sign-In</title>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script type="module" src="actions.js"></script>
 </head>
 
 <body>
@@ -28,41 +29,19 @@
     data-shape="rectangular" data-logo_alignment="left">
   </div>
 
-  <script>
-    // Callback function to handle the credential response
-    function handleCredentialResponse(response) {
+  <script type="module">
+    
+    import {Login, Register} from './actions.js';
 
+    // Callback function to handle the credential response
+    window.handleCredentialResponse = function(response) {
       // Extract the ID Token from the response
       const id_token = response.credential;
+      //console.log("id_token: ", id_token);
+      Login({id_token}, "google");
 
-      // You can send this ID token to your backend for verification
-      fetch("/login/google", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ idToken: id_token })
-      })
-        .then(res => res.json())
-        .then(data => {
-          if (data.success) {
-            window.location.href = 'success.html';
-          }
-          else if (data.needsRegistration) {
-            localStorage.setItem("email", data.email);
-            localStorage.setItem("userID", data.userID);
-            window.location.href = `googleRegister.html`;
-          }
-          else {
-            alert("Login failed: " + data.message);
-          }
-        })
-        .catch(err => {
-          console.error("Error sending token to server:", err);
-        });
     }
   </script>
-  <script type="module" src="actions.js"></script>
 </body>
 
 </html>

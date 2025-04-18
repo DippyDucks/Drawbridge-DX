@@ -1,55 +1,59 @@
 import AuthenticationStrategyInterface from './AuthenticationStrategyInterface.js';
 import { OAuth2Client } from 'google-auth-library';
-import { query } from "../../../config/db.js";
 import jwt from "jsonwebtoken";
 import config from 'config';
+import User from '../../../db/Users.js'
+import { UserDoesNotExist, BadToken, AccountExists } from '../errors';
+import { SuccessfulLogin, SuccessfulRegister } from "../responses";
+
 const ClientID = config.get('AuthenticateStrategies.SocialMedia.Google.Client_ID');
 const client = new OAuth2Client(ClientID);
-const jwtSecret = config.get("User.JWT_SECRET");
+const jwtSecret = config.get("JWT.SECRET");
 
 
 class Google extends AuthenticationStrategyInterface {
     /**
-     * TODO: constructor for getting database info
+     *  constructor for getting database info
      */
+    constructor(ormInstance) {
+        super();
+        this.orm = ormInstance || User.orm;
+    }
     /**
      * concrete method
      */
     async authenticate(params) {
         //verify ID token
+        let ticket;
         try {
-            const ticket = await client.verifyIdToken({
-                idToken: params.idToken,
+            ticket = await client.verifyIdToken({
+                idToken: params.id_token,
                 audience: ClientID
             });
-
-            if (!ticket) {
-                throw 'somethings wrong with the ticket :('
-            }
-
-            //get user's payload (info)
-            const payload = ticket.getPayload();
-            const userID = payload['sub']; //google's unique user ID
-            const email = payload.email //user's email address
-
-            let user = (await query("SELECT * FROM users WHERE email = ? AND user_id = ?", [email, userID]))[0];
-            if (!user) return { success: false, needsRegistration: true, userID, email, message: "User does not exist, prompting registration." };
-
-            //jwt token for existing user
-            let userToken = jwt.sign(
-                { subject: user.id, clearance: user.clearance },
-                jwtSecret,
-                { expiresIn: '6h' }
-            );
-
-            return { success: true, token: userToken, clearance: user.clearance };
-        }
-        catch (error) {
-            console.error("Error verifying token:", error);
-            return { success: false, message: error };
+        } catch (error) {
+            throw new BadToken("There was an issue verifying the token.");
         }
 
+        //get user's payload (info)
+        const payload = ticket.getPayload();
+        const userID = payload['sub']; //google's unique user ID
+        const email = payload.email; //user's email address
+        const givenName = payload.given_name;
+        const familyName = payload.family_name;
 
+        let user = await User.findOne({ where: { email: email, user_id: userID } });
+        if (!user) {
+            throw new UserDoesNotExist("User does not exist.", { email: email, userID: userID, username: givenName + familyName });
+        }
+
+        //jwt token for existing user
+        let userToken = jwt.sign(
+            { subject: user.id, clearance: user.clearance },
+            jwtSecret,
+            { expiresIn: '6h' }
+        );
+
+        return new SuccessfulLogin("Log in success.", userToken, user.clearance);
     }
 
     refreshAuthToken() {
@@ -58,15 +62,23 @@ class Google extends AuthenticationStrategyInterface {
     }
 
     async registerUser(params) {
-            let insertParams = [params.email, params.userID];
-            
-            await query("INSERT INTO users (email, user_id) VALUES (?, ?)", insertParams);
-        
+        let username = params.username;
+        let user = await User.findOne({ where: { username: params.username } });
+        if (user) {
+            throw new AccountExists("Username already taken.", "Username");
 
+            /*not sure if i should do this, since whoever used this package may want to do something different, like allow the user to choose their username, or append a different amount of digits, or something else.
+            // Keep generating a new username until we find a unique one
+            do {
+                let randomNum = Math.floor(100000 + Math.random() * 900000); // Generate a random 6-digit number
+                username = `${params.username}${randomNum}`;
+                user = await User.findOne({ where: { username: username } }); // Check if this new username exists
+            } while (user);  // Repeat if the username is already taken*/
+        }
 
+        const newUser = await User.create({ email: params.email, user_id: params.userID, username: username });
 
-
-        return { success: true, message: "User registered successfully." };
+        return new SuccessfulRegister("User registered successfully.", newUser.toJSON());
     }
 
     logOutUser(params) {
