@@ -1,2 +1,2 @@
 # Drawbridge
-Authentication and Authorization System
+Simple Strategy Based Authentication System 
