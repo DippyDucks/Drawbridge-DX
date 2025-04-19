@@ -1,5 +1,6 @@
 import AuthenticationService from './AuthenticationService.js';
 import UsernamePassword from './strategy/UsernamePassword.js';
+import Google from './strategy/Google.js';
 import orm from '../../db/orm.js';
 
 const authenticationService = new AuthenticationService();
@@ -34,6 +35,9 @@ function SetStrategy(strategy) {
     switch (strategy) {
         case "username-password":
             authenticationService.setStrategy(new UsernamePassword(orm));
+            break;
+        case "google":
+            authenticationService.setStrategy(new Google(orm));
             break;
         default:
             throw new Error("Invalid authentication strategy");
