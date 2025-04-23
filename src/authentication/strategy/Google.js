@@ -82,7 +82,7 @@ class Google extends AuthenticationStrategyInterface {
     logOutUser(params) {
         const auth2 = params.auth2;
         auth2.signOut().then(function () {
-            //any other post-sign-out actions, like changing to sign in page?
+            return;
         });
     }
 
