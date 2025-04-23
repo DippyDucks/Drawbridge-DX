@@ -2,7 +2,7 @@ import Google from '../../src/authentication/strategy/Google.js';
 import orm from '../../db/orm.js';
 import Users from '../../db/Users.js';
 import { getConfig } from '../../src/config.js';
-const testingInfo = getConfig().AuthenticateStrategies.SocialMedia.Google.Testing_Info;
+const testingInfo = getConfig().AuthenticationStrategies.Google.Testing_Info;
 
 import { UserDoesNotExist, BadToken, AccountExists } from '../../src/authentication/errors/index.js';
 import { SuccessfulLogin, SuccessfulRegister } from "../../src/authentication/responses/index.js";

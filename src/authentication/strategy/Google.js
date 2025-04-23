@@ -6,7 +6,7 @@ import User from '../../../db/Users.js'
 import { UserDoesNotExist, BadToken, AccountExists } from '../errors';
 import { SuccessfulLogin, SuccessfulRegister } from "../responses";
 
-const ClientID = getConfig().AuthenticateStrategies.SocialMedia.Google.Client_ID;
+const ClientID = getConfig().AuthenticationStrategies.Google.Client_ID;
 const client = new OAuth2Client(ClientID);
 const JWT = getConfig().JWT;
 
