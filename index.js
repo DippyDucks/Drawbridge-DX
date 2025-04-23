@@ -1,4 +1,5 @@
 import config from "./config/config";
+import { Login, Register, Logout } from "./src/authentication/AuthenticationManager";
 
 let internalConfig = config || {"AppName": "Drawbridge"};
 
@@ -20,5 +21,8 @@ function getConfig() {
 
 export {
     setConfig,
-    getConfig
+    getConfig,
+    Login,
+    Register,
+    Logout
 }
