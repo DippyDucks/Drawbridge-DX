@@ -1,14 +1,15 @@
 import config from "./config/config";
 import { Login, Register, Logout } from "./src/authentication/AuthenticationManager";
 
-let internalConfig = config || {"AppName": "Drawbridge"};
+const defaultConfig = config || {"AppName": "Drawbridge"};
+let internalConfig = { ...defaultConfig };
 
 /**
  * Set the config from the user including the default internalConfig
  * @param {*} userConfig - the config file passed by the user
  */
-function setConfig(userConfig) {
-  internalConfig = { ...internalConfig, ...userConfig };
+function setConfig(userConfig = {}) {
+  internalConfig = { ...defaultConfig, ...userConfig };
 }
 
 /**
@@ -16,12 +17,7 @@ function setConfig(userConfig) {
  * @returns the config
  */
 function getConfig() {
-    if (!internalConfig) {
-        return config || {"AppName": "Drawbridge"};
-    }
-    else {
-        return internalConfig;
-    }
+    return internalConfig;
 }
 
 export {
