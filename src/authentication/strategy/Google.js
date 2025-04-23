@@ -49,7 +49,7 @@ class Google extends AuthenticationStrategyInterface {
         let userToken = jwt.sign(
             { subject: user.id, clearance: user.clearance },
             JWT.SECRET,
-            JWT.expires_in
+            {expiresIn: JWT.expires_in}
         );
 
         return new SuccessfulLogin("Log in success.", userToken, user.clearance);
