@@ -16,7 +16,12 @@ function setConfig(userConfig) {
  * @returns the config
  */
 function getConfig() {
-    return internalConfig;
+    if (!internalConfig) {
+        return config || {"AppName": "Drawbridge"};
+    }
+    else {
+        return internalConfig;
+    }
 }
 
 export {
