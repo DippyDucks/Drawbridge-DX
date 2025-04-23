@@ -1,5 +1,5 @@
 import { Sequelize } from 'sequelize';
-import { getConfig } from '..';
+import { getConfig } from '../src/config';
 
 const dbConfig = getConfig().Database;
 const appName = getConfig().AppName;

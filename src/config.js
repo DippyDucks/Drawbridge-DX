@@ -51,4 +51,20 @@ let config = {
     }
 }
 
-export default config;
+/**
+ * Set the config from the user including the default config
+ * @param {*} userConfig - the config file passed by the user
+ */
+function setConfig(userConfig = {}) {
+    config = { ...config, ...userConfig };
+  }
+  
+  /**
+   * Get the config for use
+   * @returns the config
+   */
+  function getConfig() {
+      return config;
+  }
+
+export { setConfig, getConfig };
