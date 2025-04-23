@@ -1,5 +1,6 @@
 {
   "name": "drawbridge",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
