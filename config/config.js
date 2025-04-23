@@ -1,4 +1,4 @@
-{
+let config = {
     "AppName": "Drawbridge",
     "Database": {
         "dialect": "mysql",
@@ -50,3 +50,5 @@
         }
     }
 }
+
+export default config;

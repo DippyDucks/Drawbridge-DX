@@ -1,15 +1,14 @@
 import AuthenticationStrategyInterface from './AuthenticationStrategyInterface.js';
 import { OAuth2Client } from 'google-auth-library';
 import jwt from "jsonwebtoken";
-import config from 'config';
+import { getConfig } from '../../../index.js';
 import User from '../../../db/Users.js'
 import { UserDoesNotExist, BadToken, AccountExists } from '../errors';
 import { SuccessfulLogin, SuccessfulRegister } from "../responses";
 
-const ClientID = config.get('AuthenticateStrategies.SocialMedia.Google.Client_ID');
+const ClientID = getConfig().AuthenticateStrategies.SocialMedia.Google.Client_ID;
 const client = new OAuth2Client(ClientID);
-const jwtSecret = config.get("JWT.SECRET");
-
+const JWT = getConfig().JWT;
 
 class Google extends AuthenticationStrategyInterface {
     /**
@@ -49,8 +48,8 @@ class Google extends AuthenticationStrategyInterface {
         //jwt token for existing user
         let userToken = jwt.sign(
             { subject: user.id, clearance: user.clearance },
-            jwtSecret,
-            { expiresIn: '6h' }
+            JWT.SECRET,
+            {expiresIn: JWT.expires_in}
         );
 
         return new SuccessfulLogin("Log in success.", userToken, user.clearance);

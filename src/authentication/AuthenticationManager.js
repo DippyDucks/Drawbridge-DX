@@ -28,6 +28,17 @@ async function Register(strategy, params) {
 }
 
 /**
+ * Logout the user using the logoutUser method of the chosen strategy
+ * @param {*} strategy - The string of the strategy being used
+ * @param {*} params - The information the strategy needs to logout the user
+ * @returns - The custom response object or custom error of the method
+ */
+async function Logout(strategy, params) {
+    SetStrategy(strategy);
+    return authenticationService.logOutUser(params);
+}
+
+/**
  * The switch statement to set the strategy on the authentication service
  * @param {} strategy - The string of the strategy being used
  */
@@ -40,8 +51,8 @@ function SetStrategy(strategy) {
             authenticationService.setStrategy(new Google(orm));
             break;
         default:
-            throw new Error("Invalid authentication strategy");
+            throw new Error("Invalid authentication strategy.");
     }
 }
 
-export { Login, Register }
+export { Login, Register, Logout }
