@@ -1,7 +1,7 @@
 import AuthenticationStrategyInterface from './AuthenticationStrategyInterface.js';
 import { OAuth2Client } from 'google-auth-library';
 import jwt from "jsonwebtoken";
-import { getConfig } from '../AuthenticationManager.js';
+import { getConfig } from '../../../index.js';
 import User from '../../../db/Users.js'
 import { UserDoesNotExist, BadToken, AccountExists } from '../errors';
 import { SuccessfulLogin, SuccessfulRegister } from "../responses";

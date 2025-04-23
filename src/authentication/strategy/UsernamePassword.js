@@ -2,7 +2,7 @@ import AuthenticationStrategyInterface from './AuthenticationStrategyInterface.j
 
 import { UserDoesNotExist, IncorrectPassword, AccountExists } from '../errors';
 import { SuccessfulLogin, SuccessfulRegister } from '../responses';
-import { getConfig } from '../AuthenticationManager.js';
+import { getConfig } from '../../../index.js';
 import User from '../../../db/Users.js';
 
 import jwt from "jsonwebtoken"; 

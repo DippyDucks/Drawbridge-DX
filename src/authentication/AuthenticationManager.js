@@ -2,26 +2,8 @@ import AuthenticationService from './AuthenticationService.js';
 import UsernamePassword from './strategy/UsernamePassword.js';
 import Google from './strategy/Google.js';
 import orm from '../../db/orm.js';
-import config from '../../config/config.js'
 
 const authenticationService = new AuthenticationService();
-let internalConfig = config || {"AppName": "Drawbridge"};
-
-/**
- * Set the config from the user including the default internalConfig
- * @param {*} userConfig - the config file passed by the user
- */
-function setConfig(userConfig) {
-  internalConfig = { ...internalConfig, ...userConfig };
-}
-
-/**
- * Get the config for use
- * @returns the config
- */
-function getConfig() {
-    return internalConfig;
-  }
 
 /**
  * Login the user using the authenticate method of the chosen strategy
@@ -63,14 +45,14 @@ async function Logout(strategy, params) {
 function SetStrategy(strategy) {
     switch (strategy) {
         case "username-password":
-            authenticationService.setStrategy(new UsernamePassword(orm(internalConfig)));
+            authenticationService.setStrategy(new UsernamePassword(orm));
             break;
         case "google":
-            authenticationService.setStrategy(new Google(orm(internalConfig)));
+            authenticationService.setStrategy(new Google(orm));
             break;
         default:
             throw new Error("Invalid authentication strategy.");
     }
 }
 
-export { Login, Register, Logout, setConfig, getConfig }
+export { Login, Register, Logout }

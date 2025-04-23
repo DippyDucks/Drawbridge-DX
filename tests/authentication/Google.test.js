@@ -1,7 +1,7 @@
 import Google from '../../src/authentication/strategy/Google.js';
 import orm from '../../db/orm.js';
 import Users from '../../db/Users.js';
-import { getConfig } from '../../src/authentication/AuthenticationManager.js';
+import { getConfig } from '../../index.js';
 const testingInfo = getConfig().AuthenticateStrategies.SocialMedia.Google.Testing_Info;
 
 import { UserDoesNotExist, BadToken, AccountExists } from '../../src/authentication/errors/index.js';

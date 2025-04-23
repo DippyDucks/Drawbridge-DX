@@ -1,5 +1,5 @@
 import { Sequelize } from 'sequelize';
-import { getConfig } from '../src/authentication/AuthenticationManager';
+import { getConfig } from '..';
 
 const dbConfig = getConfig().Database;
 const appName = getConfig().AppName;
