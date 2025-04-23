@@ -1,7 +1,8 @@
 import { Sequelize } from 'sequelize';
-import config from 'config';
-const dbConfig = config.get('Database');
-const appName = config.get('AppName');
+import { getConfig } from '../src/authentication/AuthenticationManager';
+
+const dbConfig = getConfig().Database;
+const appName = getConfig().AppName;
 
 const orm = new Sequelize({
   dialect: dbConfig.dialect,
@@ -16,7 +17,7 @@ const orm = new Sequelize({
 });
 
 orm.authenticate().then(() => {
-  console.log(`${appName} has successfully connected to the database.`);
+  console.log(`${appName || "Default App"} has successfully connected to the database.`);
 }).catch((error) => {
  console.error('OOPS! Failed to connect to the database.', error);
 });

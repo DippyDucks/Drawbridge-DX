@@ -2,12 +2,13 @@ import AuthenticationStrategyInterface from './AuthenticationStrategyInterface.j
 
 import { UserDoesNotExist, IncorrectPassword, AccountExists } from '../errors';
 import { SuccessfulLogin, SuccessfulRegister } from '../responses';
+import { getConfig } from '../AuthenticationManager.js';
 import User from '../../../db/Users.js';
 
 import jwt from "jsonwebtoken"; 
 import bcrypt from 'bcrypt'; 
-import config from 'config';
-const JWT = config.get('JWT');
+
+const JWT = getConfig().JWT;
 
 /**
  * Strategy for authenticating with a username and password.
@@ -71,7 +72,7 @@ class UsernamePassword extends AuthenticationStrategyInterface {
         return;
     }
 
-    logOutUser() {
+    logOutUser(params) {
         return;
     }
 
