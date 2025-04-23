@@ -90,7 +90,7 @@ test('User with an id_token that contains a user_id and email that already exist
 test('User registering with an username already registered should throw AccountExists error with type Username', async () => {
     await expect(new Google(orm).registerUser({ "username": "ValidTest" }))
         .rejects
-        .toThrowError(new AccountExists('Username already taken.', { type: 'Username' }));
+        .toThrowError(new AccountExists('Username already taken. Generated a unique username.', { type: 'Username' }));
 });
 
 test('User that registers with a new email, user_id, and username should get a SuccessfulRegister response', async () => {
