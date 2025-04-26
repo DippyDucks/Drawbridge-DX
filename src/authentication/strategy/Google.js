@@ -1,15 +1,14 @@
 import AuthenticationStrategyInterface from './AuthenticationStrategyInterface.js';
 import { OAuth2Client } from 'google-auth-library';
 import jwt from "jsonwebtoken";
-import config from 'config';
+import { getConfig } from '../../config.js';
 import User from '../../../db/Users.js'
 import { UserDoesNotExist, BadToken, AccountExists } from '../errors';
 import { SuccessfulLogin, SuccessfulRegister } from "../responses";
 
-const ClientID = config.get('AuthenticateStrategies.SocialMedia.Google.Client_ID');
+const ClientID = getConfig().AuthenticationStrategies.Google.Client_ID;
 const client = new OAuth2Client(ClientID);
-const jwtSecret = config.get("JWT.SECRET");
-
+const JWT = getConfig().JWT;
 
 class Google extends AuthenticationStrategyInterface {
     /**
@@ -49,8 +48,8 @@ class Google extends AuthenticationStrategyInterface {
         //jwt token for existing user
         let userToken = jwt.sign(
             { subject: user.id, clearance: user.clearance },
-            jwtSecret,
-            { expiresIn: '6h' }
+            JWT.SECRET,
+            {expiresIn: JWT.expires_in}
         );
 
         return new SuccessfulLogin("Log in success.", userToken, user.clearance);
@@ -65,15 +64,13 @@ class Google extends AuthenticationStrategyInterface {
         let username = params.username;
         let user = await User.findOne({ where: { username: params.username } });
         if (user) {
-            throw new AccountExists("Username already taken.", "Username");
-
-            /*not sure if i should do this, since whoever used this package may want to do something different, like allow the user to choose their username, or append a different amount of digits, or something else.
             // Keep generating a new username until we find a unique one
             do {
                 let randomNum = Math.floor(100000 + Math.random() * 900000); // Generate a random 6-digit number
                 username = `${params.username}${randomNum}`;
                 user = await User.findOne({ where: { username: username } }); // Check if this new username exists
-            } while (user);  // Repeat if the username is already taken*/
+            } while (user);  // Repeat if the username is already taken
+            throw new AccountExists("Username already taken. Generated a unique username.", "Username");
         }
 
         const newUser = await User.create({ email: params.email, user_id: params.userID, username: username });
@@ -84,7 +81,7 @@ class Google extends AuthenticationStrategyInterface {
     logOutUser(params) {
         const auth2 = params.auth2;
         auth2.signOut().then(function () {
-            //any other post-sign-out actions, like changing to sign in page?
+            return;
         });
     }
 

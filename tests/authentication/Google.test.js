@@ -1,8 +1,8 @@
 import Google from '../../src/authentication/strategy/Google.js';
 import orm from '../../db/orm.js';
 import Users from '../../db/Users.js';
-import config from 'config';
-const testingInfo = config.get("AuthenticateStrategies.SocialMedia.Google.Testing_Info");
+import { getConfig } from '../../src/config.js';
+const testingInfo = getConfig().AuthenticationStrategies.Google.Testing_Info;
 
 import { UserDoesNotExist, BadToken, AccountExists } from '../../src/authentication/errors/index.js';
 import { SuccessfulLogin, SuccessfulRegister } from "../../src/authentication/responses/index.js";
@@ -90,7 +90,7 @@ test('User with an id_token that contains a user_id and email that already exist
 test('User registering with an username already registered should throw AccountExists error with type Username', async () => {
     await expect(new Google(orm).registerUser({ "username": "ValidTest" }))
         .rejects
-        .toThrowError(new AccountExists('Username already taken.', { type: 'Username' }));
+        .toThrowError(new AccountExists('Username already taken. Generated a unique username.', { type: 'Username' }));
 });
 
 test('User that registers with a new email, user_id, and username should get a SuccessfulRegister response', async () => {
