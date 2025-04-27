@@ -9,18 +9,12 @@ let config = {
         "password": "root"
     },
     "JWT": {
-        "SECRET": "a28072f93f9996e049d6fc813d457a43bcf86a671acac2de2a9e93befffaf4d7",
+        "SECRET": "",
         "expires_in": "6h"
     },
     "AuthenticationStrategies": {
         "Google": {
-            "Client_ID": "816018920557-75tu9l4dj92hkjkv8799ja136ijhgv1t.apps.googleusercontent.com",
-            "Testing_Info": {
-                "Client_ID": "816018920557-75tu9l4dj92hkjkv8799ja136ijhgv1t.apps.googleusercontent.com",
-                "Client_Secret": "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",
-                "Valid_Refresh_Token": "1//04S5Ve7E01jCWCgYIARAAGAQSNwF-L9IrhyBuxEqLBM3wbBKFxYKsWKVRBjgXfm5ZaB1Rlkjo2iC04vw1g42gWEvuQxx6DBmL1Hk",
-                "Invalid_Refresh_Token": "1//04p9K3QdA3YOZCgYIARAAGAQSNwF-L9Irt4JIqYy3DbnFZqGIh0yRADp-H5RMk4o5FJ3WYZBYaPcAQeARnaWVJ0D9fvmu2hYV-wQ"
-            }
+            "Client_ID": "",
         }
     }
 }
