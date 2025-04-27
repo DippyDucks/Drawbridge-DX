@@ -1,3 +1,4 @@
 /node_modules
 /test/node_modules
-src\config.js
+src/config.js
+.npmignore
